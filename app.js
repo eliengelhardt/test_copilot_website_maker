@@ -24,7 +24,7 @@ if (auth) {
         if (user) {
             currentUser = user;
             const userInfoDiv = document.getElementById('user-info');
-            userInfoDiv.innerHTML = 'Logged in as: ';
+            userInfoDiv.textContent = 'Logged in as: ';
             
             const emailSpan = document.createElement('span');
             emailSpan.textContent = user.email || 'Anonymous';
