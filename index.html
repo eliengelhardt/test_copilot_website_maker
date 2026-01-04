@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LTL Weight/Volume Checker</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>LTL Weight/Volume Checker</h1>
+            <div id="user-info"></div>
+        </header>
+
+        <main>
+            <section class="input-section">
+                <div class="form-group">
+                    <label for="ltl-row">Enter LTL Row Number:</label>
+                    <input type="number" id="ltl-row" placeholder="Enter row number" min="1">
+                    <button id="check-btn" onclick="checkLTL()">Check LTL</button>
+                </div>
+                <div id="warnings" class="warnings"></div>
+            </section>
+
+            <section id="results-section" class="results-section" style="display: none;">
+                <h2>Weight/Volume Breakdown</h2>
+                <div id="breakdown-container"></div>
+                
+                <h3>Summary</h3>
+                <div id="summary-container"></div>
+                
+                <h3>Validation Status</h3>
+                <div id="validation-container"></div>
+            </section>
+
+            <div id="loading" class="loading" style="display: none;">
+                <div class="spinner"></div>
+                <p>Loading data...</p>
+            </div>
+        </main>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    
+    <script src="config.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
