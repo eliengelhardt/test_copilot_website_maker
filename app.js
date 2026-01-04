@@ -1,30 +1,49 @@
-// Initialize Firebase
-firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
-const database = firebase.database();
-
 // Current user
 let currentUser = null;
 
-// Initialize authentication
-auth.onAuthStateChanged((user) => {
-    if (user) {
-        currentUser = user;
-        document.getElementById('user-info').innerHTML = `
-            Logged in as: ${user.email || 'Anonymous'} 
-            <button onclick="signOut()" style="margin-left: 10px; padding: 5px 10px; cursor: pointer;">Sign Out</button>
-        `;
+// Initialize Firebase (with error handling)
+let auth = null;
+let database = null;
+
+try {
+    if (typeof firebase !== 'undefined') {
+        firebase.initializeApp(firebaseConfig);
+        auth = firebase.auth();
+        database = firebase.database();
     } else {
-        // Sign in anonymously for multi-user access
-        auth.signInAnonymously().catch((error) => {
-            console.error('Authentication error:', error);
-            showError('Authentication failed. Please refresh the page.');
-        });
+        console.warn('Firebase SDK not loaded. Running in offline mode with mock data.');
     }
-});
+} catch (error) {
+    console.error('Firebase initialization error:', error);
+    console.warn('Running in offline mode with mock data.');
+}
+
+// Initialize authentication
+if (auth) {
+    auth.onAuthStateChanged((user) => {
+        if (user) {
+            currentUser = user;
+            document.getElementById('user-info').innerHTML = `
+                Logged in as: ${user.email || 'Anonymous'} 
+                <button onclick="signOut()" style="margin-left: 10px; padding: 5px 10px; cursor: pointer;">Sign Out</button>
+            `;
+        } else {
+            // Sign in anonymously for multi-user access
+            auth.signInAnonymously().catch((error) => {
+                console.error('Authentication error:', error);
+                showError('Authentication failed. Please refresh the page.');
+            });
+        }
+    });
+} else {
+    // Offline mode
+    document.getElementById('user-info').innerHTML = 'Offline mode (Firebase not configured)';
+}
 
 function signOut() {
-    auth.signOut();
+    if (auth) {
+        auth.signOut();
+    }
     location.reload();
 }
 
@@ -312,7 +331,10 @@ function validateThresholds(calculations, totalWeight, totalVolume) {
 
 // Log to Firebase for multi-user tracking
 function logToFirebase(ltlRow, calculations) {
-    if (!currentUser) return;
+    if (!currentUser || !database) {
+        console.log('Skipping Firebase logging (offline mode)');
+        return;
+    }
     
     const timestamp = new Date().toISOString();
     const logData = {
