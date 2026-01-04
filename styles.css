@@ -242,6 +242,20 @@ main {
     color: #721c24;
 }
 
+.parent-sku-section {
+    margin-bottom: 30px;
+}
+
+.parent-sku-title {
+    color: #667eea;
+    margin-bottom: 15px;
+}
+
+.parent-sku-total-row {
+    font-weight: bold;
+    background: #f8f9fa;
+}
+
 .status-icon {
     font-size: 20px;
     font-weight: bold;

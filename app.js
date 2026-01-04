@@ -23,10 +23,20 @@ if (auth) {
     auth.onAuthStateChanged((user) => {
         if (user) {
             currentUser = user;
-            document.getElementById('user-info').innerHTML = `
-                Logged in as: ${user.email || 'Anonymous'} 
-                <button onclick="signOut()" style="margin-left: 10px; padding: 5px 10px; cursor: pointer;">Sign Out</button>
-            `;
+            const userInfoDiv = document.getElementById('user-info');
+            userInfoDiv.innerHTML = 'Logged in as: ';
+            
+            const emailSpan = document.createElement('span');
+            emailSpan.textContent = user.email || 'Anonymous';
+            userInfoDiv.appendChild(emailSpan);
+            
+            const signOutBtn = document.createElement('button');
+            signOutBtn.textContent = 'Sign Out';
+            signOutBtn.style.marginLeft = '10px';
+            signOutBtn.style.padding = '5px 10px';
+            signOutBtn.style.cursor = 'pointer';
+            signOutBtn.onclick = signOut;
+            userInfoDiv.appendChild(signOutBtn);
         } else {
             // Sign in anonymously for multi-user access
             auth.signInAnonymously().catch((error) => {
@@ -37,7 +47,7 @@ if (auth) {
     });
 } else {
     // Offline mode
-    document.getElementById('user-info').innerHTML = 'Offline mode (Firebase not configured)';
+    document.getElementById('user-info').textContent = 'Offline mode (Firebase not configured)';
 }
 
 function signOut() {
@@ -215,8 +225,8 @@ function displayResults(calculations, ltlRow) {
         const parentSKUSafe = escapeHtml(parentSKU);
         
         const tableHTML = `
-            <div style="margin-bottom: 30px;">
-                <h4 style="color: #667eea; margin-bottom: 15px;">Parent SKU: ${parentSKUSafe}</h4>
+            <div class="parent-sku-section">
+                <h4 class="parent-sku-title">Parent SKU: ${parentSKUSafe}</h4>
                 <table class="breakdown-table">
                     <thead>
                         <tr>
@@ -239,7 +249,7 @@ function displayResults(calculations, ltlRow) {
                                 <td>${item.calculatedVolume.toFixed(2)}</td>
                             </tr>
                         `).join('')}
-                        <tr style="font-weight: bold; background: #f8f9fa;">
+                        <tr class="parent-sku-total-row">
                             <td colspan="4">Parent SKU Total</td>
                             <td>${data.totalWeight.toFixed(2)}</td>
                             <td>${data.totalVolume.toFixed(2)}</td>
