@@ -94,7 +94,7 @@ async function checkLTL() {
 async function fetchGoogleSheetData(ltlRow) {
     try {
         // Check if Google Sheets API is properly configured
-        if (GOOGLE_SHEETS_API_KEY === "YOUR_GOOGLE_SHEETS_API_KEY") {
+        if (!GOOGLE_SHEETS_API_KEY || GOOGLE_SHEETS_API_KEY.startsWith('YOUR_')) {
             showWarning('Google Sheets API is not configured. Using mock data for demonstration.');
             return getMockData(ltlRow);
         }
@@ -199,15 +199,24 @@ function displayResults(calculations, ltlRow) {
     let totalWeight = 0;
     let totalVolume = 0;
     
+    // Helper function to safely escape HTML
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+    
     // Create breakdown table for each parent SKU
     Object.keys(calculations).forEach(parentSKU => {
         const data = calculations[parentSKU];
         totalWeight += data.totalWeight;
         totalVolume += data.totalVolume;
         
+        const parentSKUSafe = escapeHtml(parentSKU);
+        
         const tableHTML = `
             <div style="margin-bottom: 30px;">
-                <h4 style="color: #667eea; margin-bottom: 15px;">Parent SKU: ${parentSKU}</h4>
+                <h4 style="color: #667eea; margin-bottom: 15px;">Parent SKU: ${parentSKUSafe}</h4>
                 <table class="breakdown-table">
                     <thead>
                         <tr>
@@ -222,7 +231,7 @@ function displayResults(calculations, ltlRow) {
                     <tbody>
                         ${data.items.map(item => `
                             <tr>
-                                <td>${item.childSKU}</td>
+                                <td>${escapeHtml(item.childSKU)}</td>
                                 <td>${item.weight.toFixed(2)}</td>
                                 <td>${item.volume.toFixed(2)}</td>
                                 <td>${item.quantity}</td>
@@ -358,13 +367,19 @@ function logToFirebase(ltlRow, calculations) {
 // Utility functions
 function showError(message) {
     const warnings = document.getElementById('warnings');
-    warnings.innerHTML = `<div class="error">${message}</div>`;
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'error';
+    errorDiv.textContent = message;
+    warnings.innerHTML = '';
+    warnings.appendChild(errorDiv);
 }
 
 function showWarning(message) {
     const warnings = document.getElementById('warnings');
-    const currentWarnings = warnings.innerHTML;
-    warnings.innerHTML = currentWarnings + `<div class="warning">${message}</div>`;
+    const warningDiv = document.createElement('div');
+    warningDiv.className = 'warning';
+    warningDiv.textContent = message;
+    warnings.appendChild(warningDiv);
 }
 
 function clearResults() {
