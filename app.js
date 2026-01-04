@@ -32,9 +32,7 @@ if (auth) {
             
             const signOutBtn = document.createElement('button');
             signOutBtn.textContent = 'Sign Out';
-            signOutBtn.style.marginLeft = '10px';
-            signOutBtn.style.padding = '5px 10px';
-            signOutBtn.style.cursor = 'pointer';
+            signOutBtn.className = 'sign-out-btn';
             signOutBtn.onclick = signOut;
             userInfoDiv.appendChild(signOutBtn);
         } else {
@@ -104,7 +102,9 @@ async function checkLTL() {
 async function fetchGoogleSheetData(ltlRow) {
     try {
         // Check if Google Sheets API is properly configured
-        if (!GOOGLE_SHEETS_API_KEY || GOOGLE_SHEETS_API_KEY.startsWith('YOUR_')) {
+        if (!GOOGLE_SHEETS_API_KEY || 
+            GOOGLE_SHEETS_API_KEY.startsWith('YOUR_') || 
+            GOOGLE_SHEETS_API_KEY.length < 20) {
             showWarning('Google Sheets API is not configured. Using mock data for demonstration.');
             return getMockData(ltlRow);
         }
