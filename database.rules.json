@@ -1,0 +1,11 @@
+{
+  "rules": {
+    "ltl_checks": {
+      ".read": "auth != null",
+      ".write": "auth != null",
+      "$checkId": {
+        ".validate": "newData.hasChildren(['ltlRow', 'timestamp', 'userId'])"
+      }
+    }
+  }
+}
